@@ -15,6 +15,9 @@
         <module>glmall-member</module>
         <module>glmall-coupon</module>
         <module>glmall-product</module>
+        <module>glmall-gateway</module>
+        <module>glmall-common</module>
+        <module>renren-fast</module>
     </modules>
 
 </project>
