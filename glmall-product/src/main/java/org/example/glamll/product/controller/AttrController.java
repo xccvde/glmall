@@ -3,6 +3,7 @@ package org.example.glamll.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.example.glamll.product.vo.AttrGroupRelationVo;
 import org.example.glamll.product.vo.AttrRespVO;
 import org.example.glamll.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ public class AttrController {
 
         return R.ok();
     }
+
 
     /**
      * 删除

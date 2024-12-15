@@ -9,14 +9,14 @@ import org.example.glamll.product.entity.AttrAttrgroupRelationEntity;
 import org.example.glamll.product.entity.AttrGroupEntity;
 import org.example.glamll.product.entity.CategoryEntity;
 import org.example.glamll.product.service.CategoryService;
+import org.example.glamll.product.vo.AttrGroupRelationVo;
 import org.example.glamll.product.vo.AttrRespVO;
 import org.example.glamll.product.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -167,5 +167,38 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
 
     }
+
+    /**
+     * 根据分组id查找关联的所有基本属性
+     * @param attrgroupId
+     * @return
+     */
+    @Override
+    public List<AttrEntity> getAttrRelationAttr(Long attrgroupId) {
+        List<AttrAttrgroupRelationEntity> relationEntities = attrAttrgroupRelationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrgroupId));
+
+        List<Long> attrIds = relationEntities.stream().map((relation) -> {
+            return relation.getAttrId();
+        }).collect(Collectors.toList());
+
+        if (attrIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        Collection<AttrEntity> attrEntities = this.listByIds(attrIds);
+        return (List<AttrEntity>) attrEntities;
+    }
+
+    @Override
+    public void deleteRelation(List<AttrAttrgroupRelationEntity> entities) {
+//        List<AttrAttrgroupRelationEntity> entities = Arrays.asList(vos).stream().map((item) -> {
+//            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+//            BeanUtils.copyProperties(item, relationEntity);
+//            return relationEntity;
+//        }).collect(Collectors.toList());
+
+        attrAttrgroupRelationDao.deleteBatchRelation(entities);
+    }
+
 
 }

@@ -2,10 +2,13 @@ package org.example.glamll.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.common.utils.PageUtils;
+import org.example.glamll.product.entity.AttrAttrgroupRelationEntity;
 import org.example.glamll.product.entity.AttrEntity;
+import org.example.glamll.product.vo.AttrGroupRelationVo;
 import org.example.glamll.product.vo.AttrRespVO;
 import org.example.glamll.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,5 +29,10 @@ public interface AttrService extends IService<AttrEntity> {
     AttrRespVO getAttrInfo(Long attrId);
 
     void updateAttr(AttrVo attr);
+
+    List<AttrEntity> getAttrRelationAttr(Long attrgroupId);
+
+    void deleteRelation(List<AttrAttrgroupRelationEntity> entities);
+
 }
 

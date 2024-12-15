@@ -1,15 +1,16 @@
 package org.example.glamll.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.example.glamll.product.entity.AttrAttrgroupRelationEntity;
+import org.example.glamll.product.entity.AttrEntity;
+import org.example.glamll.product.service.AttrService;
 import org.example.glamll.product.service.CategoryService;
+import org.example.glamll.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.example.glamll.product.entity.AttrGroupEntity;
 import org.example.glamll.product.service.AttrGroupService;
@@ -32,6 +33,21 @@ public class AttrGroupController {
     private AttrGroupService attrGroupService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private AttrService attrService;
+
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable Long attrgroupId){
+        List<AttrEntity> entities = attrService.getAttrRelationAttr(attrgroupId);
+        return R.ok().put("data", entities);
+
+    }
+
+    @PostMapping("/attr/relation/delete")
+    public R deleteRelation(@RequestBody List<AttrAttrgroupRelationEntity> entities){
+        attrService.deleteRelation(entities);
+        return R.ok();
+    }
 
     /**
      * 列表
