@@ -5,7 +5,6 @@ import org.example.common.utils.PageUtils;
 import org.example.glamll.product.entity.AttrEntity;
 import org.example.glamll.product.vo.AttrRespVO;
 import org.example.glamll.product.vo.AttrVo;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public interface AttrService extends IService<AttrEntity> {
 
     void saveAttr(AttrVo attr);
 
-    PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId);
+    PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type);
 
     AttrRespVO getAttrInfo(Long attrId);
 

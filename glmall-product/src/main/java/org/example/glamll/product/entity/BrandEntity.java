@@ -41,8 +41,8 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 品牌logo地址
 	 */
-	@URL(message = "logo必须是一个合法的url地址",groups = {AddGroup.class,UpdateGroup.class})
 	@NotBlank(groups = {AddGroup.class})
+	@URL(message = "logo必须是一个合法的url地址",groups={AddGroup.class,UpdateGroup.class})
 	private String logo;
 	/**
 	 * 介绍
@@ -51,20 +51,21 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 显示状态[0-不显示；1-显示]
 	 */
-	@NotNull(groups = {AddGroup.class,UpdateStatusGroup.class})
-	@ListValue(vals = {0,1},groups = {AddGroup.class, UpdateStatusGroup.class})
+//	@Pattern()
+	@NotNull(groups = {AddGroup.class, UpdateStatusGroup.class})
+	@ListValue(vals={0,1},groups = {AddGroup.class, UpdateStatusGroup.class})
 	private Integer showStatus;
 	/**
 	 * 检索首字母
 	 */
-	@NotNull(groups = {AddGroup.class})
-	@Pattern(regexp = "^[a-zA-Z]$", message = "检索首字母必须是一个字母",groups = {AddGroup.class,UpdateGroup.class})
+	@NotEmpty(groups={AddGroup.class})
+	@Pattern(regexp="^[a-zA-Z]$",message = "检索首字母必须是一个字母",groups={AddGroup.class,UpdateGroup.class})
 	private String firstLetter;
 	/**
 	 * 排序
 	 */
-	@NotEmpty(groups = {AddGroup.class})
-	@Min(value = 0, message = "排序必须是大于等于0的数字",groups = {AddGroup.class,UpdateGroup.class})
+	@NotNull(groups={AddGroup.class})
+	@Min(value = 0,message = "排序必须大于等于0",groups={AddGroup.class,UpdateGroup.class})
 	private Integer sort;
 
 }

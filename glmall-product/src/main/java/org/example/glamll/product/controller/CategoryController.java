@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ import org.example.common.utils.R;
  */
 @RestController
 @RequestMapping("product/category")
+@Slf4j
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -75,9 +77,10 @@ public class CategoryController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateCascade(category);
+            log.info("category: {}", category);
+            categoryService.updateCascade(category);
 
-        return R.ok();
+            return R.ok();
     }
 
     /**

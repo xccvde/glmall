@@ -1,6 +1,7 @@
 package org.example.glamll.product.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.example.common.constant.ProductConstant;
 import org.example.glamll.product.dao.AttrAttrgroupRelationDao;
 import org.example.glamll.product.dao.AttrGroupDao;
 import org.example.glamll.product.dao.CategoryDao;
@@ -58,15 +59,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         this.save(attrEntity);
-        AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
-        attrAttrgroupRelationEntity.setAttrId(attrEntity.getAttrId());
-        attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
-        attrAttrgroupRelationDao.insert(attrAttrgroupRelationEntity);
+
+        //保存关联关系
+        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
+            AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
+            attrAttrgroupRelationEntity.setAttrId(attrEntity.getAttrId());
+            attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
+            attrAttrgroupRelationDao.insert(attrAttrgroupRelationEntity);
+        }
+
     }
 
     @Override
-    public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId) {
-        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
+    public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type) {
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>().eq("attr_type", "base".equalsIgnoreCase(type) ? ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() : ProductConstant.AttrEnum.ATTR_TYPE_SALE.getCode());
 
         if (catelogId != 0) {
             queryWrapper.eq("catelog_id", catelogId);
@@ -91,10 +97,12 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             AttrRespVO attrRespVO = new AttrRespVO();
             BeanUtils.copyProperties(attrEntity, attrRespVO);
 
-            AttrAttrgroupRelationEntity attrId = attrAttrgroupRelationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
-            if (attrId != null && attrId.getAttrGroupId() != null) {
-                AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
-                attrRespVO.setGroupName(attrGroupEntity.getAttrGroupName());
+            if ("base".equalsIgnoreCase(type)){
+                AttrAttrgroupRelationEntity attrId = attrAttrgroupRelationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
+                if (attrId != null && attrId.getAttrGroupId() != null) {
+                    AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
+                    attrRespVO.setGroupName(attrGroupEntity.getAttrGroupName());
+                }
             }
 
             CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
@@ -116,14 +124,17 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrRespVO attrRespVO = new AttrRespVO();
         BeanUtils.copyProperties(attrEntity, attrRespVO);
 
-        AttrAttrgroupRelationEntity relation = attrAttrgroupRelationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrId));
-        if (relation !=null){
-            attrRespVO.setAttrGroupId(relation.getAttrGroupId());
-            AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(relation.getAttrGroupId());
-            if (attrGroupEntity != null){
-                attrRespVO.setGroupName(attrGroupEntity.getAttrGroupName());
+        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()){
+            AttrAttrgroupRelationEntity relation = attrAttrgroupRelationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrId));
+            if (relation !=null){
+                attrRespVO.setAttrGroupId(relation.getAttrGroupId());
+                AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(relation.getAttrGroupId());
+                if (attrGroupEntity != null){
+                    attrRespVO.setGroupName(attrGroupEntity.getAttrGroupName());
+                }
             }
         }
+
 
         Long catelogId = attrEntity.getCatelogId();
         Long[] categoryPath = categoryService.findCategoryPath(catelogId);
@@ -142,17 +153,19 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         this.updateById(attrEntity);
+        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()){
+            AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
+            relation.setAttrGroupId(attr.getAttrGroupId());
+            relation.setAttrId(attr.getAttrId());
 
-        AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
-        relation.setAttrGroupId(attr.getAttrGroupId());
-        relation.setAttrId(attr.getAttrId());
-
-        Integer count = attrAttrgroupRelationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-        if (count>0){
-            attrAttrgroupRelationDao.update(relation, new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
-        }else {
-            attrAttrgroupRelationDao.insert(relation);
+            Integer count = attrAttrgroupRelationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
+            if (count>0){
+                attrAttrgroupRelationDao.update(relation, new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
+            }else {
+                attrAttrgroupRelationDao.insert(relation);
+            }
         }
+
     }
 
 }

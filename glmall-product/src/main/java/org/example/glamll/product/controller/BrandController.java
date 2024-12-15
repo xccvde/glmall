@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.common.valid.AddGroup;
 import org.example.common.valid.UpdateGroup;
 import org.example.common.valid.UpdateStatusGroup;
@@ -31,6 +32,7 @@ import javax.validation.Valid;
  * @email z2485861264@gmail.com
  * @date 2024-08-03 21:17:41
  */
+@Slf4j
 @RestController
 @RequestMapping("product/brand")
 public class BrandController {
@@ -63,8 +65,13 @@ public class BrandController {
      */
     @RequestMapping("/save")
     public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
-        brandService.save(brand);
-        return R.ok();
+        try {
+            brandService.save(brand);
+            return R.ok();
+        } catch (Exception e) {
+            log.error("保存品牌失败", e);
+            return R.error("保存品牌失败: " + e.getMessage());
+        }
     }
 
     /**
