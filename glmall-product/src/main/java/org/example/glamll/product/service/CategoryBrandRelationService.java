@@ -2,8 +2,10 @@ package org.example.glamll.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.common.utils.PageUtils;
+import org.example.glamll.product.entity.BrandEntity;
 import org.example.glamll.product.entity.CategoryBrandRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +24,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateBrand(Long brandId, String name);
 
     void updateCategory(Long catId, String name);
+
+    List<BrandEntity> getBrandsByCatId(Long catId);
 }
 
